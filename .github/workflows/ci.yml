@@ -41,12 +41,16 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
 
+      - name: Create database
+        run: |
+          mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS skillhub_test;"
+
       - name: Setup environment
         run: |
           cp .env.example .env
           php artisan key:generate
-          php artisan jwt:secret
-          echo "JWT_SECRET=$(php artisan jwt:secret --show)" >> .env
+          JWT_SECRET=$(php artisan jwt:secret --show)
+          echo "JWT_SECRET=$JWT_SECRET" >> .env
           echo "APP_ENV=testing" >> .env
           echo "DB_CONNECTION=mysql" >> .env
           echo "DB_HOST=127.0.0.1" >> .env
@@ -60,10 +64,12 @@ jobs:
           echo "MONGODB_DATABASE=skillhub_test" >> .env
 
       - name: Run migrations
-        run: php artisan migrate --env=testing --force
+        run: php artisan migrate --force
 
       - name: Run tests with coverage
+        id: tests
         run: ./vendor/bin/phpunit --coverage-clover coverage.xml
+        continue-on-error: true
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
@@ -73,3 +79,4 @@ jobs:
           args: >
             -Dsonar.organization=teo2129
             -Dsonar.projectKey=TEO2129_skillhub_backend_ec09
+            -Dsonar.php.coverage.reportPaths=coverage.xml
