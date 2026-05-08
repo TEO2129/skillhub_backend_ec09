@@ -47,6 +47,9 @@ Route::get('/messages/conversation/{interlocuteurId}',[MessageController::class,
 Route::post('/messages/envoyer',                      [MessageController::class, 'envoyer']);
 Route::get('/messages/interlocuteurs',                [MessageController::class, 'interlocuteurs']);
 
+// ─── Notation des formations ────────────────────────────────────────
+Route::post('/formations/{id}/noter', [FormationController::class, 'noter']);
+
 // ─── Preflight CORS ───────────────────────────────────────────
 Route::options('/{any}', function () {
     return response('', 200);

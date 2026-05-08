@@ -39,4 +39,28 @@ class Formation extends Model
     {
         return $this->hasMany(FormationVue::class, 'formation_id');
     }
+
+        /**
+     * Relation : une formation a plusieurs notes (ratings).
+     */
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    /**
+     * Accesseur : note moyenne arrondie à 1 décimale.
+     */
+    public function getNoteMoyenneAttribute()
+    {
+        return round($this->ratings()->avg('note'), 1);
+    }
+
+    /**
+     * Accesseur : nombre d'avis.
+     */
+    public function getNombreAvisAttribute()
+    {
+        return $this->ratings()->count();
+    }
 }

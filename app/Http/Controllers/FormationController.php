@@ -47,7 +47,7 @@ class FormationController extends Controller
         return response()->json($query->get());
     }
 
-    /**
+        /**
      * Afficher une formation et incrementer ses vues de facon unique.
      * Route : GET /formations/{id}
      */
@@ -102,7 +102,14 @@ class FormationController extends Controller
 
         ActivityLogService::consultationFormation($formation->id, $utilisateurId);
 
-        return response()->json($formation->fresh(['formateur:id,nom,email']));
+        // Récupérer la formation avec les attributs calculés
+        $formation = $formation->fresh(['formateur:id,nom,email']);
+        
+        // Ajouter les attributs de notation
+        $formation->note_moyenne = $formation->note_moyenne;
+        $formation->nombre_avis = $formation->nombre_avis;
+
+        return response()->json($formation);
     }
 
     /**
@@ -257,5 +264,70 @@ class FormationController extends Controller
         }
 
         return $reponse;
+    }
+
+        /**
+     * Noter une formation (apprenant authentifié et inscrit uniquement).
+     * Route : POST /api/formations/{id}/noter
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function noter(Request $request, $id): JsonResponse
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (!$user) {
+                return response()->json(['message' => self::MSG_USER_NON_TROUVE], 404);
+            }
+
+            if ($user->role !== 'apprenant') {
+                return response()->json(['error' => 'Seuls les apprenants peuvent noter'], 403);
+            }
+
+            $formation = Formation::find($id);
+            if (!$formation) {
+                return response()->json(['message' => self::MSG_FORMATION_INTRO], 404);
+            }
+
+            // Vérifier que l'apprenant est inscrit à la formation
+            $estInscrit = $formation->inscriptions()
+                ->where('user_id', $user->id)
+                ->exists();
+
+            if (!$estInscrit) {
+                return response()->json(['error' => 'Vous devez être inscrit à cette formation pour la noter'], 403);
+            }
+
+            // Validation des données
+            $request->validate([
+                'note' => 'required|integer|min:1|max:5',
+                'commentaire' => 'nullable|string|max:1000'
+            ]);
+
+            // Vérifier qu'il n'a pas déjà noté
+            $dejaNote = Rating::where('user_id', $user->id)
+                ->where('formation_id', $formation->id)
+                ->exists();
+
+            if ($dejaNote) {
+                return response()->json(['error' => 'Vous avez déjà noté cette formation'], 400);
+            }
+
+            // Création de la note
+            $rating = Rating::create([
+                'user_id' => $user->id,
+                'formation_id' => $formation->id,
+                'note' => $request->note,
+                'commentaire' => $request->commentaire
+            ]);
+
+            return response()->json($rating, 201);
+
+        } catch (JWTException $e) {
+            return response()->json(['message' => self::MSG_TOKEN_INVALIDE], 401);
+        }
     }
 }
