@@ -20,7 +20,6 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      # ⬇️ AJOUTE CES LIGNES POUR MONGODB ⬇️
       mongodb:
         image: mongo:6.0
         ports:
@@ -55,7 +54,6 @@ jobs:
           echo "DB_DATABASE=skillhub_test" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=root" >> .env
-          # ⬇️ AJOUTE CES LIGNES POUR MONGODB ⬇️
           echo "MONGODB_CONNECTION=mongodb" >> .env
           echo "MONGODB_HOST=127.0.0.1" >> .env
           echo "MONGODB_PORT=27017" >> .env
