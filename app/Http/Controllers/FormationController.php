@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Models\Rating;
 
 /**
  * Controleur de gestion des formations.
@@ -61,46 +62,46 @@ class FormationController extends Controller
             return response()->json(['message' => self::MSG_FORMATION_INTRO], 404);
         }
 
-        $utilisateurId = null;
+        $user_id = null;
         try {
             $user = JWTAuth::parseToken()->authenticate();
             if ($user) {
-                $utilisateurId = $user->id;
+                $user_id = $user->id;
             }
         } catch (JWTException $e) {
             // Utilisateur non connecte
         }
 
-        if ($utilisateurId) {
+        if ($user_id) {
             $dejaVue = FormationVue::where('formation_id', $formation->id)
-                ->where('utilisateur_id', $utilisateurId)
+                ->where('user_id', $user_id)
                 ->exists();
 
             if (! $dejaVue) {
                 FormationVue::create([
                     'formation_id'   => $formation->id,
-                    'utilisateur_id' => $utilisateurId,
+                    'user_id' => $user_id,
                     'ip'             => $request->ip(),
                 ]);
                 $formation->increment('nombre_de_vues');
             }
         } else {
             $dejaVueIp = FormationVue::where('formation_id', $formation->id)
-                ->whereNull('utilisateur_id')
+                ->whereNull('user_id')
                 ->where('ip', $request->ip())
                 ->exists();
 
             if (! $dejaVueIp) {
                 FormationVue::create([
                     'formation_id'   => $formation->id,
-                    'utilisateur_id' => null,
+                    'user_id' => null,
                     'ip'             => $request->ip(),
                 ]);
                 $formation->increment('nombre_de_vues');
             }
         }
 
-        ActivityLogService::consultationFormation($formation->id, $utilisateurId);
+        ActivityLogService::consultationFormation($formation->id, $user_id);
 
         // Récupérer la formation avec les attributs calculés
         $formation = $formation->fresh(['formateur:id,nom,email']);

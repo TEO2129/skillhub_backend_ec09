@@ -40,7 +40,7 @@ class InscriptionController extends Controller
                 if (! $formation) {
                     $reponse = response()->json(['message' => 'Formation introuvable'], 404);
                 } else {
-                    $dejaInscrit = Inscription::where('utilisateur_id', $user->id)
+                    $dejaInscrit = Inscription::where('user_id', $user->id)
                         ->where('formation_id', $formation->id)
                         ->first();
 
@@ -50,7 +50,7 @@ class InscriptionController extends Controller
                         ], 409);
                     } else {
                         $inscription = Inscription::create([
-                            'utilisateur_id' => $user->id,
+                            'user_id' => $user->id,
                             'formation_id'   => $formation->id,
                             'progression'    => 0,
                         ]);
@@ -87,7 +87,7 @@ class InscriptionController extends Controller
             } elseif ($user->role !== 'apprenant') {
                 $reponse = response()->json(['message' => 'Seul un apprenant peut se désinscrire'], 403);
             } else {
-                $inscription = Inscription::where('utilisateur_id', $user->id)
+                $inscription = Inscription::where('user_id', $user->id)
                     ->where('formation_id', $formationId)
                     ->first();
 
@@ -124,7 +124,7 @@ class InscriptionController extends Controller
                 ], 403);
             } else {
                 $inscriptions = Inscription::with('formation.formateur:id,nom,email')
-                    ->where('utilisateur_id', $user->id)
+                    ->where('user_id', $user->id)
                     ->get();
 
                 $reponse = response()->json($inscriptions);

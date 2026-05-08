@@ -22,30 +22,42 @@ class RatingTest extends TestCase
     {
         parent::setUp();
 
-        // Création formateur
-        $this->formateur = User::factory()->create([
+        // Création du formateur
+        $this->formateur = User::create([
+            'nom' => 'Formateur Test',
+            'email' => 'formateur@test.com',
+            'password' => bcrypt('password123'),
             'role' => 'formateur'
         ]);
 
-        // Création formation
-        $this->formation = Formation::factory()->create([
-            'formateur_id' => $this->formateur->id,
+        // Création de la formation
+        $this->formation = Formation::create([
             'titre' => 'Formation test',
             'description' => 'Description test',
             'categorie' => 'developpement_web',
-            'niveau' => 'debutant'
+            'niveau' => 'debutant',
+            'prix' => 0,
+            'duree_heures' => 10,
+            'nombre_de_vues' => 0,
+            'formateur_id' => $this->formateur->id
         ]);
 
-        // Création apprenant
-        $this->apprenant = User::factory()->create([
+        // Création de l'apprenant
+        $this->apprenant = User::create([
+            'nom' => 'Apprenant Test',
+            'email' => 'apprenant@test.com',
+            'password' => bcrypt('password123'),
             'role' => 'apprenant'
         ]);
         $this->token = JWTAuth::fromUser($this->apprenant);
 
-        // Inscription de l'apprenant à la formation
-        $this->formation->inscriptions()->create([
+        // Inscription de l'apprenant à la formation (avec le bon nom de colonne)
+        // La colonne s'appelle 'user_id' (pas 'user_id')
+        \DB::table('inscriptions')->insert([
+            'formation_id' => $this->formation->id,
             'user_id' => $this->apprenant->id,
-            'formation_id' => $this->formation->id
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
     }
 
@@ -104,7 +116,12 @@ class RatingTest extends TestCase
     /** @test */
     public function un_apprenant_non_inscrit_ne_peut_pas_noter()
     {
-        $autreApprenant = User::factory()->create(['role' => 'apprenant']);
+        $autreApprenant = User::create([
+            'nom' => 'Autre Apprenant',
+            'email' => 'autre@test.com',
+            'password' => bcrypt('password123'),
+            'role' => 'apprenant'
+        ]);
         $autreToken = JWTAuth::fromUser($autreApprenant);
 
         $response = $this->withHeader('Authorization', "Bearer {$autreToken}")
@@ -138,10 +155,19 @@ class RatingTest extends TestCase
             'commentaire' => 'Bien'
         ]);
 
-        $autreApprenant = User::factory()->create(['role' => 'apprenant']);
-        $this->formation->inscriptions()->create([
+        $autreApprenant = User::create([
+            'nom' => 'Deuxieme Apprenant',
+            'email' => 'deuxieme@test.com',
+            'password' => bcrypt('password123'),
+            'role' => 'apprenant'
+        ]);
+
+        // Inscription du deuxième apprenant
+        \DB::table('inscriptions')->insert([
+            'formation_id' => $this->formation->id,
             'user_id' => $autreApprenant->id,
-            'formation_id' => $this->formation->id
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
 
         Rating::create([

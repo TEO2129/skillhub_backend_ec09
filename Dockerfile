@@ -1,47 +1,48 @@
 # Stage 1 : builder
-FROM php:8.2-cli-alpine AS builder
+FROM php:8.4-cli-bookworm AS builder
 
-RUN apk add --no-cache \
-    git curl zip unzip \
-    libpng-dev oniguruma-dev libxml2-dev \
-    autoconf g++ make
+# Utiliser mlocati/docker-php-extension-installer
+# Ce script télécharge des extensions pré-compilées depuis GitHub
+# → ne dépend PAS de deb.debian.org
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-RUN docker-php-ext-install pdo pdo_mysql mbstring exif bcmath gd \
-    && pecl install mongodb \
-    && docker-php-ext-enable mongodb
+RUN chmod +x /usr/local/bin/install-php-extensions \
+    && install-php-extensions \
+        pdo_mysql \
+        mbstring \
+        exif \
+        bcmath \
+        gd \
+        mongodb \
+        zip
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Copier composer.json et composer.lock
 COPY composer.json composer.lock ./
+RUN composer install --no-interaction --no-progress --optimize-autoloader --no-dev
 
-# --no-scripts pour eviter package:discover (artisan absent a cette etape)
-RUN composer install \
-    --no-dev \
-    --no-interaction \
-    --no-progress \
-    --no-scripts \
-    --optimize-autoloader
-
-# Copier tout le code (artisan est maintenant disponible)
 COPY . .
+RUN php artisan package:discover --ansi || true
+RUN composer dump-autoload --optimize
 
-# Executer les scripts maintenant qu'artisan est present
-RUN php artisan package:discover --ansi \
-    && composer dump-autoload --optimize
-
+# ─────────────────────────────────────────────────────────────
 # Stage 2 : runtime
-FROM php:8.2-fpm-alpine AS runtime
+# ─────────────────────────────────────────────────────────────
+FROM php:8.4-cli-bookworm AS runtime
 
-RUN apk add --no-cache \
-    libpng-dev oniguruma-dev libxml2-dev \
-    autoconf g++ make \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif bcmath gd \
-    && pecl install mongodb \
-    && docker-php-ext-enable mongodb \
-    && apk del autoconf g++ make
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions \
+    && install-php-extensions \
+        pdo_mysql \
+        mbstring \
+        exif \
+        bcmath \
+        gd \
+        mongodb \
+        zip
 
 WORKDIR /var/www/html
 
@@ -50,6 +51,6 @@ COPY --from=builder /app /var/www/html
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-EXPOSE 9000
+EXPOSE 8000
 
-CMD ["php-fpm"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

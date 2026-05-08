@@ -4,9 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Modèle Rating (notation d'une formation par un apprenant).
- */
 class Rating extends Model
 {
     protected $fillable = [
@@ -20,17 +17,11 @@ class Rating extends Model
         'note' => 'integer',
     ];
 
-    /**
-     * Relation : une note appartient à un utilisateur (apprenant).
-     */
-    public function user()
+    public function utilisateur()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Relation : une note appartient à une formation.
-     */
     public function formation()
     {
         return $this->belongsTo(Formation::class);

@@ -65,7 +65,7 @@ class ModuleEtInscriptionControllerTest extends TestCase
     private function inscrire(User $apprenant, Formation $formation): Inscription
     {
         return Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -408,7 +408,7 @@ class ModuleEtInscriptionControllerTest extends TestCase
             ->assertJsonStructure(['message', 'inscription']);
 
         $this->assertDatabaseHas('inscriptions', [
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
         ]);
     }
@@ -488,7 +488,7 @@ class ModuleEtInscriptionControllerTest extends TestCase
             ->assertJsonFragment(['message' => 'Désinscription réussie']);
 
         $this->assertDatabaseMissing('inscriptions', [
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
         ]);
     }

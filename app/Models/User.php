@@ -47,12 +47,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function inscriptions()
     {
-        return $this->hasMany(Inscription::class, 'utilisateur_id');
+        return $this->hasMany(Inscription::class, 'user_id');
     }
 
     public function modulesTermines()
     {
-        return $this->belongsToMany(Module::class, 'module_user', 'utilisateur_id', 'module_id')
+        return $this->belongsToMany(Module::class, 'module_user', 'user_id', 'module_id')
             ->withPivot('termine')
             ->withTimestamps();
     }

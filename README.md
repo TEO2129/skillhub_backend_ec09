@@ -39,7 +39,6 @@ Bloc 03 — Cloud, DevOps et Architecture | Bachelor CDWFS 2025/2026
 ### 1. Cloner le depot
 
 ```bash
-git clone https://github.com/poun-2108/skillhub-back_CICD.git
 cd skillhub-back_CICD
 ```
 

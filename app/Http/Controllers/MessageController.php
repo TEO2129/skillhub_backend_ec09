@@ -171,7 +171,7 @@ class MessageController extends Controller
             $utilisateurs = User::where('role', 'formateur')
                 ->whereHas('formations', function ($q) use ($user) {
                     $q->whereHas('inscriptions', function ($q2) use ($user) {
-                        $q2->where('utilisateur_id', $user->id);
+                        $q2->where('user_id', $user->id);
                     });
                 })->select('id', 'nom', 'email', 'role')->get();
         }

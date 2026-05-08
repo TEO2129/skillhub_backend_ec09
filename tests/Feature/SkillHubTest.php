@@ -438,7 +438,7 @@ class SkillHubTest extends TestCase
         $formation = $this->creerFormation($formateur);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -457,7 +457,7 @@ class SkillHubTest extends TestCase
         $formation = $this->creerFormation($formateur);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -481,7 +481,7 @@ class SkillHubTest extends TestCase
         $module    = $this->creerModule($formation);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -506,7 +506,7 @@ class SkillHubTest extends TestCase
         $this->creerModule($formation, 2);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -526,7 +526,7 @@ class SkillHubTest extends TestCase
         $module    = $this->creerModule($formation);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -571,7 +571,7 @@ class SkillHubTest extends TestCase
         $formation = $this->creerFormation($formateur);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);

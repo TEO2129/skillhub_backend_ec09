@@ -189,13 +189,13 @@ class MessageControllerTest extends TestCase
         $formation = $this->creerFormation($formateur);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant1->id,
+            'user_id' => $apprenant1->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant2->id,
+            'user_id' => $apprenant2->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -219,13 +219,13 @@ class MessageControllerTest extends TestCase
         $formation2 = $this->creerFormation($formateur2);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation1->id,
             'progression'    => 0,
         ]);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation2->id,
             'progression'    => 0,
         ]);

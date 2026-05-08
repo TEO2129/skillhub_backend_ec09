@@ -33,7 +33,7 @@ class Module extends Model
      */
     public function utilisateurs()
     {
-        return $this->belongsToMany(User::class, 'module_user', 'module_id', 'utilisateur_id')
+        return $this->belongsToMany(User::class, 'module_user', 'module_id', 'user_id')
             ->withPivot('termine')
             ->withTimestamps();
     }

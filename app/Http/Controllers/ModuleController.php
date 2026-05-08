@@ -194,7 +194,7 @@ class ModuleController extends Controller
                 if (! $module) {
                     $reponse = response()->json(['message' => self::MSG_MODULE_INTRO], 404);
                 } else {
-                    $inscription = Inscription::where('utilisateur_id', $user->id)
+                    $inscription = Inscription::where('user_id', $user->id)
                         ->where('formation_id', $module->formation_id)
                         ->first();
 

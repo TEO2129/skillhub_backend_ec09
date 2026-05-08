@@ -15,12 +15,12 @@ return new class extends Migration
         Schema::create('formation_vues', function (Blueprint $table) {
             $table->id();
             $table->foreignId('formation_id')->constrained()->onDelete('cascade');
-            $table->foreignId('utilisateur_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('ip')->nullable();
             $table->timestamps();
 
             // Une seule vue par utilisateur connecté par formation
-            $table->unique(['formation_id', 'utilisateur_id']);
+            $table->unique(['formation_id', 'user_id']);
         });
     }
 

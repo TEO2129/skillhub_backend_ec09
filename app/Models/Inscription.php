@@ -16,7 +16,7 @@ class Inscription extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'utilisateur_id',
+        'user_id',
         'formation_id',
         'progression',
     ];
@@ -26,7 +26,7 @@ class Inscription extends Model
      */
     public function utilisateur()
     {
-        return $this->belongsTo(User::class, 'utilisateur_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

@@ -175,7 +175,7 @@ class CoverageTest extends TestCase
 
         $vue = FormationVue::create([
             'formation_id'   => $formation->id,
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'ip'             => '127.0.0.1',
         ]);
 
@@ -447,7 +447,7 @@ class CoverageTest extends TestCase
         $module    = $this->creerModule($formation);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -468,7 +468,7 @@ class CoverageTest extends TestCase
         $module    = $this->creerModule($formation);
 
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -499,7 +499,7 @@ class CoverageTest extends TestCase
         $formation = $this->creerFormation($formateur);
 
         $inscription = Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);

@@ -12,7 +12,7 @@ class FormationVue extends Model
 {
     protected $fillable = [
         'formation_id',
-        'utilisateur_id',
+        'user_id',
         'ip',
     ];
 
@@ -23,6 +23,6 @@ class FormationVue extends Model
 
     public function utilisateur()
     {
-        return $this->belongsTo(User::class, 'utilisateur_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

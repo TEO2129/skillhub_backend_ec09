@@ -276,7 +276,7 @@ class MessageTest extends TestCase
 
         $formation = $this->creerFormation($formateur);
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);
@@ -295,7 +295,7 @@ class MessageTest extends TestCase
 
         $formation = $this->creerFormation($formateur);
         Inscription::create([
-            'utilisateur_id' => $apprenant->id,
+            'user_id' => $apprenant->id,
             'formation_id'   => $formation->id,
             'progression'    => 0,
         ]);

@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('inscriptions', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('utilisateur_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('formation_id');
             $table->integer('progression')->default(0);
 
             $table->timestamps();
 
-            $table->foreign('utilisateur_id')
+            $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
